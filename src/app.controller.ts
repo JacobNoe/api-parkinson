@@ -11,6 +11,7 @@ export class AppController {
   @SkipAuth()
   @Post('auth/login')
   async login(@Request() req) {
+    console.log("REQ:", req.user);
     return this.authService.login(req.user);
   }
 }
