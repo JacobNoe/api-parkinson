@@ -17,7 +17,7 @@ export class AuthService {
       const { contrasena, ...result } = user;
       return result;
     }
-    return "Datos incorrectos";
+    return null;
   }
 
   async login(user: any) {
