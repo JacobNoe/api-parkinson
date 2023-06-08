@@ -26,8 +26,9 @@ export class MensajesService {
         try {
             await queryRunner.connect();
             const { idProcMensaje, estado } = message;
-            const mensaje = await queryRunner.manager.query("UPDATE `BUZON.PROC.MENSAJES` SET estado=" + estado + " WHERE idProcMensaje=" + idProcMensaje + ";");
-            return { msg: "Mensaje actualizado correctamente" };
+            await queryRunner.manager.query("UPDATE `BUZON.PROC.MENSAJES` SET estado=" + estado + " WHERE idProcMensaje=" + idProcMensaje + ";");
+            const mensaje = await queryRunner.manager.query("SELECT * FROM `BUZON.PROC.MENSAJES` WHERE idProcMensaje=" + idProcMensaje + ";");
+            return { msg: "Mensaje actualizado correctamente", mensaje };
         } catch (error) {
             console.log(error);
             return { msg: 'Error en el servidor.' };
