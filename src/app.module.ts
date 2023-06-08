@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
 import { PacientesModule } from './pacientes/pacientes.module';
+import { MensajesModule } from './mensajes/mensajes.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { PacientesModule } from './pacientes/pacientes.module';
     UsuariosModule,
     AuthModule,
     PacientesModule,
+    MensajesModule,
   ],
   controllers: [AppController],
   providers: [
