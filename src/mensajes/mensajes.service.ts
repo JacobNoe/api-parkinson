@@ -34,6 +34,7 @@ export class MensajesService {
 
             const data = await queryRunner.manager.query("INSERT INTO `BUZON.PROC.MENSAJES` (fecha,idMensaje, idPaciente, idMedico, estado) SELECT '" + fechaFormateada + "', " + idMensaje + ", " + idPaciente + ", idMedico,1 FROM `USUARIOS.REL.PACIENTES_MEDICOS` WHERE idPaciente=" + idPaciente + ";");
             const mensaje = await queryRunner.manager.query("SELECT * FROM `BUZON.PROC.MENSAJES` WHERE idProcMensaje=" + data.insertId + ";");
+            console.log("Registro creado");
             return { msg: "Mensaje agregado correctamente", mensaje };
         } catch (error) {
             // console.log(error);
@@ -45,7 +46,7 @@ export class MensajesService {
         try {
             const { idPatient, prom_res_eval } = message;
             const respEvalTrazos = await this.postApiEvalTrazos(prom_res_eval);
-            // console.log("RESP", idPatient, respEvalTrazos.result.id);
+            console.log("RESP", idPatient, respEvalTrazos.result.id);
             this.crearRegistro(idPatient, respEvalTrazos.result.id);
             return { msg: "Respuesta de Trazos", respEvalTrazos };
         } catch (error) {
