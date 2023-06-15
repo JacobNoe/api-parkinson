@@ -48,6 +48,7 @@ export class MensajesService {
             const respEvalTrazos = await this.postApiEvalTrazos(prom_res_eval);
             console.log("RESP", idPatient, respEvalTrazos.result.id);
             this.crearRegistro(idPatient, respEvalTrazos.result.id);
+            this.sendPush(respEvalTrazos.result, idPatient);
             return { msg: "Respuesta de Trazos", respEvalTrazos };
         } catch (error) {
             // console.log(error);
@@ -120,4 +121,31 @@ export class MensajesService {
             return { msg: 'Error en el servidor.' };
         }
     }
+
+    async sendPush(data:any, idPatient:any ){
+        const { result} = data;
+        const imgType = 'https://cdn-icons-png.flaticon.com/512/9482/9482226.png';
+
+        try {
+            const contentMsg = {
+                "notification": {
+                    "title": result.title,
+                    "body": result.msg,
+                    "click_action": "FLUTTER_NOTIFICATION_CLICK",
+                    "image": imgType,
+                    "color": "#E92D3B",
+                    "tag": result.type
+                },
+                "to": "eIewiodmSemsYWbHLmHLhI:APA91bE9h9HJU2cuTYg6FoYsamlVTa1qlahAOE_cAwgQI52spaldC-ggs364dn9VKpPO0nYpR5rGp_HINuu8tvXEMrxJicYMKyeTx4Q2MPp200kKG_yNNkv3KtpUhhU49M0UIvGUHGvV"
+              };
+            // console.log("NRES", variables);
+            const response = await axios.post('https://parkinson-modulo-ia-production.up.railway.app/voz/asignar', contentMsg);
+            // console.log("API VOZ", response);
+            return response.data;
+        } catch (error) {
+            // console.error("ERRORR", error);
+            throw error; // Lanza el error para que pueda ser capturado en el bloque catch del método evalTrazos
+        }
+    }
+    
 }
