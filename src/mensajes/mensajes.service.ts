@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AxiosResponse } from 'axios';
 import { DataSource } from 'typeorm';
 const axios = require('axios');
 
@@ -48,7 +49,7 @@ export class MensajesService {
             const respEvalTrazos = await this.postApiEvalTrazos(prom_res_eval);
             console.log("RESP", idPatient, respEvalTrazos.result.id);
             this.crearRegistro(idPatient, respEvalTrazos.result.id);
-            this.sendPush(respEvalTrazos.result, idPatient);
+            this.enviar_notificacion(respEvalTrazos.result.type, respEvalTrazos.result.title, respEvalTrazos.result.msg, idPatient);
             return { msg: "Respuesta de Trazos", respEvalTrazos };
         } catch (error) {
             // console.log(error);
@@ -56,7 +57,7 @@ export class MensajesService {
         }
     }
 
-  
+
 
     async postApiEvalTrazos(prom_res_eval) {
         try {
@@ -71,17 +72,17 @@ export class MensajesService {
         }
     }
 
-      async evalVoz(message: any) {
+    async evalVoz(message: any) {
         try {
-            
+
             const { idPatient, mdvpFo, mdvpFlo, spread1, ppe } = message;
-            
+
             const respEvalVoz = await this.postApiEvalVoz(mdvpFo, mdvpFlo, spread1, ppe);
 
             // console.log("RESP", idPatient, respEvalVoz.result.idM);
 
             this.crearRegistro(idPatient, respEvalVoz.result.idM);
-
+            this.enviar_notificacion(respEvalVoz.result.type, respEvalVoz.result.title, respEvalVoz.result.msg, idPatient);
             return { msg: "Respuesta de Trazos", respEvalVoz };
         } catch (error) {
             // console.log(error);
@@ -89,14 +90,14 @@ export class MensajesService {
         }
     }
 
-    async postApiEvalVoz(mdvpFo, mdvpFlo, spread1, ppe) {    
+    async postApiEvalVoz(mdvpFo, mdvpFlo, spread1, ppe) {
         try {
             const variables = {
                 "MDVP:Fo(Hz)": mdvpFo,
                 "MDVP:Flo(Hz)": mdvpFlo,
                 "spread1": spread1,
                 "PPE": ppe,
-              };
+            };
             // console.log("NRES", variables);
             const response = await axios.post('https://parkinson-modulo-ia-production.up.railway.app/voz/asignar', variables);
             // console.log("API VOZ", response);
@@ -122,30 +123,62 @@ export class MensajesService {
         }
     }
 
-    async sendPush(data:any, idPatient:any ){
-        const { result} = data;
-        const imgType = 'https://cdn-icons-png.flaticon.com/512/9482/9482226.png';
+
+    async enviar_notificacion(type: string, title: string, msg: string, idPatient:any): Promise<void> {
+        console.log("TYPE",type);
+        console.log("TITLE",title);
+
+        let imgType = '';
+
+        // Validar el tipo de mensaje
+        if (type === 'Recomendación') {
+            imgType = 'https://cdn-icons-png.flaticon.com/512/9482/9482226.png';
+        } else if (type === 'Notificación') {
+            imgType = 'https://cdn-icons-png.flaticon.com/512/3602/3602137.png';
+        } else if (type === 'Alerta') {
+            imgType = 'https://cdn-icons-png.flaticon.com/512/5974/5974693.png';
+        } else if (type === 'Mensaje') {
+            imgType = 'https://cdn-icons-png.flaticon.com/512/893/893257.png';
+        } else {
+            imgType = 'https://cdn-icons-png.flaticon.com/512/893/893257.png';
+        }
+
+        // Definir la URL del EndPoint
+        const url = 'https://fcm.googleapis.com/fcm/send';
+
+        // Definir los encabezados
+        const headers = {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer AAAA30T5osU:APA91bHK1OsjE_XzQ62cA6xz4sQderER5ruQD-43xZ44qvaIaYmnkkzBCP-rsImq6LoZsohAuaFvkxTY-R9L7gXx2x5kXLYekLg2YXnvgxEMAW0dj6xWrMVBYeSnrHe9MbBNzTKAx7BW',
+        };
+
+        // Definir el cuerpo de la solicitud
+        const data = {
+            notification: {
+                title: title,
+                body: msg,
+                click_action: 'FLUTTER_NOTIFICATION_CLICK',
+                image: imgType,
+                color: '#E92D3B',
+                tag: type,
+            },
+            to: 'eIewiodmSemsYWbHLmHLhI:APA91bE9h9HJU2cuTYg6FoYsamlVTa1qlahAOE_cAwgQI52spaldC-ggs364dn9VKpPO0nYpR5rGp_HINuu8tvXEMrxJicYMKyeTx4Q2MPp200kKG_yNNkv3KtpUhhU49M0UIvGUHGvV',
+        };
 
         try {
-            const contentMsg = {
-                "notification": {
-                    "title": result.title,
-                    "body": result.msg,
-                    "click_action": "FLUTTER_NOTIFICATION_CLICK",
-                    "image": imgType,
-                    "color": "#E92D3B",
-                    "tag": result.type
-                },
-                "to": "eIewiodmSemsYWbHLmHLhI:APA91bE9h9HJU2cuTYg6FoYsamlVTa1qlahAOE_cAwgQI52spaldC-ggs364dn9VKpPO0nYpR5rGp_HINuu8tvXEMrxJicYMKyeTx4Q2MPp200kKG_yNNkv3KtpUhhU49M0UIvGUHGvV"
-              };
-            // console.log("NRES", variables);
-            const response = await axios.post('https://parkinson-modulo-ia-production.up.railway.app/voz/asignar', contentMsg);
-            // console.log("API VOZ", response);
-            return response.data;
+            // Enviar la solicitud POST utilizando Axios
+            const response: AxiosResponse = await axios.post(url, data, { headers });
+
+            // Verificar el estado de la respuesta
+            if (response.status === 200) {
+                console.log('La solicitud PUSH se ha enviado correctamente.');
+            } else {
+                console.log('Error al enviar la solicitud. Código de estado:', response.status);
+            }
         } catch (error) {
-            // console.error("ERRORR", error);
-            throw error; // Lanza el error para que pueda ser capturado en el bloque catch del método evalTrazos
+            console.log('Error al enviar la solicitud:', error.message);
         }
     }
-    
+
+
 }
