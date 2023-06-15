@@ -9,6 +9,16 @@ export class MensajesController {
     return this.mensajesService.post(req);
   }
 
+  @Post('evalTrazos')
+  evalTrazos(@Body() req) {
+    return this.mensajesService.evalTrazos(req);
+  }
+
+  @Post('evalVoz')
+  evalVoz(@Body() req) {
+    return this.mensajesService.evalVoz(req);
+  }
+
   @Patch()
   update(@Body() req) {
     return this.mensajesService.patch(req);
