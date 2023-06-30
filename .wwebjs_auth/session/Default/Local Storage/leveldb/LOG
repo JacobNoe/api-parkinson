@@ -1,3 +1,6 @@
-2023/06/29-21:23:51.815 7ba8 Reusing MANIFEST C:\Users\javie\Downloads\apiParkinson\parkinson-app\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
-2023/06/29-21:23:51.815 7ba8 Recovering log #4
-2023/06/29-21:23:51.816 7ba8 Reusing old log C:\Users\javie\Downloads\apiParkinson\parkinson-app\.wwebjs_auth\session\Default\Local Storage\leveldb/000004.log 
+2023/06/29-22:35:50.042 2d70 Reusing MANIFEST C:\Users\javie\Downloads\apiParkinson\parkinson-app\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
+2023/06/29-22:35:50.042 2d70 Recovering log #4
+2023/06/29-22:35:50.043 2d70 Reusing old log C:\Users\javie\Downloads\apiParkinson\parkinson-app\.wwebjs_auth\session\Default\Local Storage\leveldb/000004.log 
+2023/06/29-22:37:50.614 a884 Level-0 table #7: started
+2023/06/29-22:37:50.618 a884 Level-0 table #7: 18307 bytes OK
+2023/06/29-22:37:50.619 a884 Delete type=0 #4

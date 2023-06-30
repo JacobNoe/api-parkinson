@@ -10,19 +10,19 @@ export class MensajesService {
     private client: Client;
 
     constructor(private dataSource: DataSource) {
-        this.client = new Client({
-            authStrategy: new LocalAuth()
-        });
+        // this.client = new Client({
+        //     authStrategy: new LocalAuth()
+        // });
 
-        this.client.on('qr', (qr) => {
-            qrcode.generate(qr, { small: true });
-        });
+        // this.client.on('qr', (qr) => {
+        //     qrcode.generate(qr, { small: true });
+        // });
 
-        this.client.on('ready', () => {
-            console.log('Conexión exitosa nenes');
-        });
+        // this.client.on('ready', () => {
+        //     console.log('Conexión exitosa nenes');
+        // });
 
-        this.client.initialize();
+        // this.client.initialize();
     }
 
     async post(message: any) {
@@ -80,7 +80,7 @@ export class MensajesService {
 
             const msgWP = `Paciente: ${nombrePaciente}\n${respEvalTrazos.result.title}\n${respEvalTrazos.result.msg}`;
             console.log("PACIENTE", nombrePaciente); 
-            this.sendMessageWP("+5212711942415", msgWP)
+            // this.sendMessageWP("+5212711942415", msgWP)
             this.enviar_notificacion(respEvalTrazos.result.type, msgN, nombrePaciente);
         });
             // this.enviar_notificacion(respEvalTrazos.result.type, respEvalTrazos.result.title, respEvalTrazos.result.msg, idPatient);
@@ -125,7 +125,7 @@ export class MensajesService {
     
                 const msgWP = `Paciente: ${nombrePaciente}\n${respEvalVoz.result.title}\n${respEvalVoz.result.msg}`;
                 console.log("PACIENTE", nombrePaciente); 
-                this.sendMessageWP("+5212711942415", msgWP)
+                // this.sendMessageWP("+5212711942415", msgWP)
                 this.enviar_notificacion(respEvalVoz.result.type, msgN, nombrePaciente);
             });
             return { msg: "Respuesta de Trazos", respEvalVoz };
@@ -242,12 +242,12 @@ export class MensajesService {
 
     // }
 
-    async sendMessageWP(numero: string, paciente: string) {
+    // async sendMessageWP(numero: string, paciente: string) {
         
-        const chatId = numero.substring(1) + '@c.us';
-        this.client.sendMessage(chatId, paciente);
+    //     const chatId = numero.substring(1) + '@c.us';
+    //     this.client.sendMessage(chatId, paciente);
 
-    }
+    // }
 
 
 }
