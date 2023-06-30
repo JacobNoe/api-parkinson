@@ -1,0 +1,38 @@
+2023/06/27-22:50:08.700 a8f4 Reusing MANIFEST C:\Users\javie\Downloads\apiParkinson\parkinson-app\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2023/06/27-22:50:08.701 a8f4 Recovering log #381
+2023/06/27-22:50:09.042 a8f4 Reusing old log C:\Users\javie\Downloads\apiParkinson\parkinson-app\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000381.log 
+2023/06/27-22:50:31.712 8648 Level-0 table #391: started
+2023/06/27-22:50:31.797 8648 Level-0 table #391: 1046815 bytes OK
+2023/06/27-22:50:31.798 8648 Delete type=0 #381
+2023/06/27-22:50:32.875 3adc Compacting 1@1 + 5@2 files
+2023/06/27-22:50:32.961 3adc Generated table #392@1: 22487 keys, 2192581 bytes
+2023/06/27-22:50:33.036 3adc Generated table #393@1: 4363 keys, 2161785 bytes
+2023/06/27-22:50:33.136 3adc Generated table #394@1: 27412 keys, 2230782 bytes
+2023/06/27-22:50:33.231 3adc Generated table #395@1: 51008 keys, 2201282 bytes
+2023/06/27-22:50:33.348 3adc Generated table #396@1: 85914 keys, 1868354 bytes
+2023/06/27-22:50:33.348 3adc Compacted 1@1 + 5@2 files => 10654784 bytes
+2023/06/27-22:50:33.349 3adc compacted to: files[ 0 0 5 0 0 0 0 ]
+2023/06/27-22:50:33.351 3adc Delete type=2 #384
+2023/06/27-22:50:33.351 3adc Delete type=2 #385
+2023/06/27-22:50:33.351 3adc Delete type=2 #386
+2023/06/27-22:50:33.351 3adc Delete type=2 #387
+2023/06/27-22:50:33.351 3adc Delete type=2 #388
+2023/06/27-22:50:33.351 3adc Delete type=2 #391
+2023/06/27-22:51:07.587 3adc Level-0 table #398: started
+2023/06/27-22:51:07.628 3adc Level-0 table #398: 1084012 bytes OK
+2023/06/27-22:51:07.629 3adc Delete type=0 #390
+2023/06/27-22:51:08.634 8648 Compacting 1@1 + 5@2 files
+2023/06/27-22:51:08.731 8648 Generated table #399@1: 22581 keys, 2191797 bytes
+2023/06/27-22:51:08.813 8648 Generated table #400@1: 4361 keys, 2163527 bytes
+2023/06/27-22:51:08.921 8648 Generated table #401@1: 27308 keys, 2229455 bytes
+2023/06/27-22:51:09.017 8648 Generated table #402@1: 44838 keys, 2193485 bytes
+2023/06/27-22:51:09.200 8648 Generated table #403@1: 104199 keys, 2256065 bytes
+2023/06/27-22:51:09.215 8648 Generated table #404@1: 5514 keys, 123716 bytes
+2023/06/27-22:51:09.215 8648 Compacted 1@1 + 5@2 files => 11158045 bytes
+2023/06/27-22:51:09.217 8648 compacted to: files[ 0 0 6 0 0 0 0 ]
+2023/06/27-22:51:09.217 8648 Delete type=2 #392
+2023/06/27-22:51:09.217 8648 Delete type=2 #393
+2023/06/27-22:51:09.217 8648 Delete type=2 #394
+2023/06/27-22:51:09.217 8648 Delete type=2 #395
+2023/06/27-22:51:09.217 8648 Delete type=2 #396
+2023/06/27-22:51:09.217 8648 Delete type=2 #398

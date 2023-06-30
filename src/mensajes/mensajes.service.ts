@@ -2,10 +2,29 @@ import { Injectable } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import { DataSource } from 'typeorm';
 const axios = require('axios');
+import { Client, LocalAuth } from 'whatsapp-web.js';
+import * as qrcode from 'qrcode-terminal';
 
 @Injectable()
 export class MensajesService {
-    constructor(private dataSource: DataSource) { }
+    private client: Client;
+
+    constructor(private dataSource: DataSource) {
+        this.client = new Client({
+            authStrategy: new LocalAuth()
+        });
+
+        this.client.on('qr', (qr) => {
+            qrcode.generate(qr, { small: true });
+        });
+
+        this.client.on('ready', () => {
+            console.log('Conexión exitosa nenes');
+        });
+
+        this.client.initialize();
+    }
+
     async post(message: any) {
         const queryRunner = this.dataSource.createQueryRunner();
         try {
@@ -26,7 +45,6 @@ export class MensajesService {
     async crearRegistro(idPaciente, idMensaje) {
         const queryRunner = this.dataSource.createQueryRunner();
         try {
-            await queryRunner.connect();
             const fechaHoraActual = new Date(Date.now());
 
             const fechaFormateada = fechaHoraActual.toISOString().slice(0, 19).replace('T', ' ');
@@ -44,12 +62,28 @@ export class MensajesService {
     }
 
     async evalTrazos(message: any) {
+        const queryRunner = this.dataSource.createQueryRunner();
         try {
+            await queryRunner.connect();
             const { idPatient, prom_res_eval } = message;
+
             const respEvalTrazos = await this.postApiEvalTrazos(prom_res_eval);
             console.log("RESP", idPatient, respEvalTrazos.result.id);
             this.crearRegistro(idPatient, respEvalTrazos.result.id);
-            this.enviar_notificacion(respEvalTrazos.result.type, respEvalTrazos.result.title, respEvalTrazos.result.msg, idPatient);
+
+        let nombrePaciente = "";
+        const pacientexdPromise = queryRunner.manager.query("SELECT Nombre, Apellidos FROM `usuarios` WHERE id=" + idPatient + ";");
+        await pacientexdPromise.then((pacientexd: any) => {
+            nombrePaciente = pacientexd[0].Nombre + pacientexd[0].Apellidos ;
+            console.log("NAME", nombrePaciente);
+            const msgN = `${respEvalTrazos.result.title}\n${respEvalTrazos.result.msg}`;
+
+            const msgWP = `Paciente: ${nombrePaciente}\n${respEvalTrazos.result.title}\n${respEvalTrazos.result.msg}`;
+            console.log("PACIENTE", nombrePaciente); 
+            this.sendMessageWP("+5212711942415", msgWP)
+            this.enviar_notificacion(respEvalTrazos.result.type, msgN, nombrePaciente);
+        });
+            // this.enviar_notificacion(respEvalTrazos.result.type, respEvalTrazos.result.title, respEvalTrazos.result.msg, idPatient);
             return { msg: "Respuesta de Trazos", respEvalTrazos };
         } catch (error) {
             // console.log(error);
@@ -73,16 +107,27 @@ export class MensajesService {
     }
 
     async evalVoz(message: any) {
+        const queryRunner = this.dataSource.createQueryRunner();
+
         try {
-
+            await queryRunner.connect();
             const { idPatient, mdvpFo, mdvpFlo, spread1, ppe } = message;
-
             const respEvalVoz = await this.postApiEvalVoz(mdvpFo, mdvpFlo, spread1, ppe);
-
             // console.log("RESP", idPatient, respEvalVoz.result.idM);
-
             this.crearRegistro(idPatient, respEvalVoz.result.idM);
-            this.enviar_notificacion(respEvalVoz.result.type, respEvalVoz.result.title, respEvalVoz.result.msg, idPatient);
+
+            let nombrePaciente = "";
+            const pacientexdPromise = queryRunner.manager.query("SELECT Nombre, Apellidos FROM `usuarios` WHERE id=" + idPatient + ";");
+            await pacientexdPromise.then((pacientexd: any) => {
+                nombrePaciente = pacientexd[0].Nombre + pacientexd[0].Apellidos ;
+                console.log("NAME", nombrePaciente);
+                const msgN = `${respEvalVoz.result.title}\n${respEvalVoz.result.msg}`;
+    
+                const msgWP = `Paciente: ${nombrePaciente}\n${respEvalVoz.result.title}\n${respEvalVoz.result.msg}`;
+                console.log("PACIENTE", nombrePaciente); 
+                this.sendMessageWP("+5212711942415", msgWP)
+                this.enviar_notificacion(respEvalVoz.result.type, msgN, nombrePaciente);
+            });
             return { msg: "Respuesta de Trazos", respEvalVoz };
         } catch (error) {
             // console.log(error);
@@ -124,9 +169,8 @@ export class MensajesService {
     }
 
 
-    async enviar_notificacion(type: string, title: string, msg: string, idPatient:any): Promise<void> {
-        console.log("TYPE",type);
-        console.log("TITLE",title);
+    async enviar_notificacion(type: string, msg: string, paciente: any): Promise<void> {
+        console.log("TYPE", type);
 
         let imgType = '';
 
@@ -155,7 +199,7 @@ export class MensajesService {
         // Definir el cuerpo de la solicitud
         const data = {
             notification: {
-                title: title,
+                title: paciente,
                 body: msg,
                 click_action: 'FLUTTER_NOTIFICATION_CLICK',
                 image: imgType,
@@ -178,6 +222,31 @@ export class MensajesService {
         } catch (error) {
             console.log('Error al enviar la solicitud:', error.message);
         }
+    }
+
+    // async sendMessageWP(numero: string, idP: string) {
+    //     const queryRunner = this.dataSource.createQueryRunner();
+
+    //     await queryRunner.connect();
+
+    //     let paciente = "";
+
+    //     const pacientexdPromise = queryRunner.manager.query("SELECT Nombre, Apellidos FROM `usuarios` WHERE id=" + idP + ";");
+
+    //     await pacientexdPromise.then((pacientexd: any) => {
+    //         paciente = pacientexd[0].Nombre;
+    //         console.log("PACIENTE", paciente);
+    //         const chatId = numero.substring(1) + '@c.us';
+    //         this.client.sendMessage(chatId, paciente);
+    //     });
+
+    // }
+
+    async sendMessageWP(numero: string, paciente: string) {
+        
+        const chatId = numero.substring(1) + '@c.us';
+        this.client.sendMessage(chatId, paciente);
+
     }
 
 
