@@ -78,7 +78,7 @@ export class MensajesService {
             console.log("NAME", nombrePaciente);
             const msgN = `${respEvalTrazos.result.title}\n${respEvalTrazos.result.msg}`;
 
-            const msgWP = `Paciente: ${nombrePaciente}\n${respEvalTrazos.result.title}\n${respEvalTrazos.result.msg}`;
+            const msgWP = `Paciente: ${nombrePaciente} \n${respEvalTrazos.result.title}\n${respEvalTrazos.result.msg}`;
             console.log("PACIENTE", nombrePaciente); 
             // this.sendMessageWP("+5212711942415", msgWP)
             this.enviar_notificacion(respEvalTrazos.result.type, msgN, nombrePaciente);
@@ -123,7 +123,7 @@ export class MensajesService {
                 console.log("NAME", nombrePaciente);
                 const msgN = `${respEvalVoz.result.title}\n${respEvalVoz.result.msg}`;
     
-                const msgWP = `Paciente: ${nombrePaciente}\n${respEvalVoz.result.title}\n${respEvalVoz.result.msg}`;
+                const msgWP = `Paciente: ${nombrePaciente} \n${respEvalVoz.result.title}\n${respEvalVoz.result.msg}`;
                 console.log("PACIENTE", nombrePaciente); 
                 // this.sendMessageWP("+5212711942415", msgWP)
                 this.enviar_notificacion(respEvalVoz.result.type, msgN, nombrePaciente);
@@ -249,5 +249,46 @@ export class MensajesService {
 
     // }
 
+
+
+    // Graficas
+    async getAll(message: any) {
+        const queryRunner = this.dataSource.createQueryRunner();
+        try {
+            await queryRunner.connect();
+            const { idPaciente, idTipoMensaje, fechaInicio, fechaFin } = message;
+            const mensajes = await queryRunner.manager.query(`
+            SELECT * 
+            FROM vista_mensajes_tipo
+            WHERE idPaciente =${idPaciente} AND  idTipoMensaje=${idTipoMensaje} AND fecha BETWEEN '${fechaInicio}' AND '${fechaFin}'`);
+            const result = []
+            mensajes.forEach(element => {
+                const existingItem = result.find(item => item.name === element.name);
+
+                if (existingItem) {
+                    existingItem.series.push({
+                        name: element.nombre,
+                        value: element.value,
+                        fecha: element.fecha
+                    });
+                } else {
+                    result.push({
+                        name: element.name,
+                        series: [
+                            {
+                                name: element.nombre,
+                                value: element.value,
+                                fecha: element.fecha
+                            }
+                        ]
+                    });
+                }
+            });
+            return result;
+        } catch (error) {
+            console.log(error);
+            return { msg: 'Error en el servidor.' };
+        }
+    }
 
 }

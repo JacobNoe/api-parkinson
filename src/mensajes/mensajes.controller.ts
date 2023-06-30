@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Patch, Post, Get, Query  } from '@nestjs/common';
 import { MensajesService } from './mensajes.service';
 
 @Controller('mensajes')
@@ -22,6 +22,11 @@ export class MensajesController {
   @Patch()
   update(@Body() req) {
     return this.mensajesService.patch(req);
+  }
+
+  @Get()
+  getAll(@Query() req:{idPaciente:number, idTipoMensaje:number, fechaInicio:string, fechaFin:string }) {
+    return this.mensajesService.getAll(req);
   }
 }
 
